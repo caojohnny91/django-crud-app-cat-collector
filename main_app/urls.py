@@ -9,4 +9,6 @@ urlpatterns = [
   # Mounts main_app's routes at the root URL
     # new route used to create a cat
     path('cats/create/', views.CatCreate.as_view(), name='cat-create'),
+    path("cats/<int:pk>/update/", views.CatUpdate.as_view(), name="cat-update"),
+    path("cats/<int:pk>/delete/", views.CatDelete.as_view(), name="cat-delete"),
 ]    

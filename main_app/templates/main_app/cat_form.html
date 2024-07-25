@@ -3,17 +3,20 @@
 {% endblock %} {% block content %}
 
 <div class="page-header">
+  <!-- Check if a cat object exists to determine if we're editing -->
+  {% if cat %}
+  <h1>Edit {{ cat.name }}</h1>
+  {% else %}
   <h1>Add a Cat</h1>
-  <img src="{% static 'images/nerd-cat.svg' %}" alt="A cat using a computer" />
+  {% endif %}
 </div>
 
 <form action="" method="post" class="form-container">
-    {% comment %} if action is blank, form submits to the current path that the form is on {% endcomment %}
-  {% csrf_token %}
+  {% csrf_token%}
   <table>
     {{ form.as_table }}
   </table>
   <button type="submit" class="btn submit">Submit!</button>
 </form>
 
-{% endblock %}
+{% comment %} if action is blank, form submits to the current path that the form is on {% endcomment %} {% endblock %}
