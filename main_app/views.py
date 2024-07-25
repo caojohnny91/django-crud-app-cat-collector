@@ -1,5 +1,13 @@
 from django.shortcuts import render
+from django.views.generic.edit import CreateView
 from .models import Cat
+
+class CatCreate(CreateView):
+    model = Cat
+    # all inherits from CreateView to create our own CBV used to create cats
+    # fields = '__all__'
+    # alter we can specify the fields we want
+    fields = ["name", "breed", "description", "age"]
 
 
 # Create your views here.
