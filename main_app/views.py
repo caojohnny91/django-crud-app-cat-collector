@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from .models import Cat
 
@@ -59,3 +59,23 @@ def cat_detail(request, cat_id):
             "feeding_form": feeding_form,
         },
     )
+
+
+def add_feeding(request, cat_id):
+    # create a ModelForm instance using the data in request.POST
+    form = FeedingForm(request.POST)
+    # validate the form
+    if form.is_valid():
+        # don't save the form to the db until it
+        # has the cat_id assigned
+        # wait to save the relationship ID first
+        new_feeding = form.save(commit=False)
+        new_feeding.cat_id = cat_id
+        new_feeding.save()
+    return redirect("cat-detail", cat_id=cat_id)
+
+
+# First we capture data from the user via the FeedingForm(request.POST) and prepare it for the database.
+# The method form.is_valid() checks if the submitted form data is valid according to the form’s specifications, such as required fields being filled and data types matching the model’s requirements.
+# After ensuring that the form contains valid data, we save the form with the commit=False option, which returns an in-memory model object so that we can assign the cat_id before actually saving to the database.
+# Finally we will redirect instead of render since data has been changed in the database.
