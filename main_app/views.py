@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect
 # Import HttpResponse to send text-based responses
 from django.http import HttpResponse
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
-from .models import Cat
+from .models import Cat, Toy
 
 # Import the FeedingForm
 from .forms import FeedingForm
@@ -26,6 +26,11 @@ class CatUpdate(UpdateView):
 class CatDelete(DeleteView):
     model = Cat
     success_url = "/cats/"
+
+
+class ToyCreate(CreateView):
+    model = Toy
+    fields = "__all__"
 
 
 # Create your views here.
