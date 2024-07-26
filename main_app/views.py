@@ -75,6 +75,9 @@ def cat_index(request):
 # update this view function to include feeding form
 def cat_detail(request, cat_id):
     cat = Cat.objects.get(id=cat_id)
+    # toys = Toy.objects.all()  # Fetch all toys
+    # Updating to Only get the toys the cat does not have
+    toys_cat_doesnt_have = Toy.objects.exclude(id__in=cat.toys.all().values_list("id"))
     # instantiate FeedingForm to be rendered in the template
     feeding_form = FeedingForm()
     return render(
@@ -84,6 +87,9 @@ def cat_detail(request, cat_id):
             # include the cat and feeding_form in the context
             "cat": cat,
             "feeding_form": feeding_form,
+            # "toys": toys,  # Pass toys to the template
+            # updating toys
+            "toys": toys_cat_doesnt_have,
         },
     )
 
@@ -106,3 +112,16 @@ def add_feeding(request, cat_id):
 # The method form.is_valid() checks if the submitted form data is valid according to the form’s specifications, such as required fields being filled and data types matching the model’s requirements.
 # After ensuring that the form contains valid data, we save the form with the commit=False option, which returns an in-memory model object so that we can assign the cat_id before actually saving to the database.
 # Finally we will redirect instead of render since data has been changed in the database.
+
+
+def associate_toy(request, cat_id, toy_id):
+    # Note that you can pass a toy's id instead of the whole object
+    Cat.objects.get(id=cat_id).toys.add(toy_id)
+    return redirect("cat-detail", cat_id=cat_id)
+
+
+def remove_toy(request, cat_id, toy_id):
+    cat = Cat.objects.get(id=cat_id)
+    toy = Toy.objects.get(id=toy_id)
+    cat.toys.remove(toy)
+    return redirect("cat-detail", cat_id=cat_id)
