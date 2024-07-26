@@ -23,7 +23,8 @@ class Cat(models.Model):
 
 
 class Feeding(models.Model):
-    date = models.DateField()
+    date = models.DateField("Feeding Date")
+    # adding "Feeding Date" changes title on admin page for the input form
     meal = models.CharField(
         max_length=1,
         # Note that we’re going to use just a single-character to represent what meal the feeding is for: "B"reakfast, "L"unch or "D"inner.
