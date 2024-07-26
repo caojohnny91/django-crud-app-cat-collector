@@ -38,6 +38,13 @@
       <img src="{% static 'images/cat-onigiri.svg' %}" alt="A cat as onigiri" />
       <img src="{% static 'images/kitty-kabob.svg' %}" alt="A kabob of kittens" />
     </div>
+    <h3>Add a Feeding</h3>
+    <!-- Add just above the feedings table -->
+    <form method="post" class="subsection-content" autocomplete="off">
+      {% csrf_token %} {{ feeding_form.as_p }}
+      <button type="submit" class="btn submit">Add Feeding</button>
+    </form>
+    <h3>Past Feedings</h3>
     <table>
       <thead>
         <tr>
