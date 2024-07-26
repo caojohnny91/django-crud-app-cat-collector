@@ -15,4 +15,6 @@ urlpatterns = [
     # The above route specifies that the <form>’s action attribute will need to look something like /cats/2/add-feeding. Let’s update the form now.
     path("toys/create/", views.ToyCreate.as_view(), name="toy-create"),
     # view.ToyCreate is a class based view for this route
+    path("toys/<int:pk>/", views.ToyDetail.as_view(), name="toy-detail"),
+    path("toys/", views.ToyList.as_view(), name="toy-index"),
 ]
