@@ -1,4 +1,7 @@
 from django.shortcuts import render, redirect
+
+# Import HttpResponse to send text-based responses
+from django.http import HttpResponse
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from .models import Cat
 
