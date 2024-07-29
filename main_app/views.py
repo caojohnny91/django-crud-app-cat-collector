@@ -9,6 +9,13 @@ from .models import Cat, Toy
 # Import the FeedingForm
 from .forms import FeedingForm
 
+# import auth
+from django.contrib.auth.views import LoginView
+
+# Add the two imports below
+from django.contrib.auth import login
+from django.contrib.auth.forms import UserCreationForm
+
 
 class CatCreate(CreateView):
     model = Cat
@@ -16,6 +23,16 @@ class CatCreate(CreateView):
     # fields = '__all__'
     # alter we can specify the fields we want
     fields = ["name", "breed", "description", "age"]
+
+    # This inherited method is called when a
+    # valid cat form is being submitted
+    def form_valid(self, form):
+        # Assign the logged in user (self.request.user)
+        form.instance.user = self.request.user  # form.instance is the cat
+        # Let the CreateView do its job as usual. super is parent class
+        return super().form_valid(form)
+    # We’re overriding the CreateView’s form_valid method to assign the logged in user, self.request.user. Yes, the built-in auth automatically assigns the user to the request object similarly our middleware in Express.
+    # In Python, methods inherited by the superclass can be invoked by prefacing the method name with super(). Accordingly, after updating the form to include the user, we’re calling super().form_valid(form) to let the CreateView do its usual job of creating the model in the database and redirecting.
 
 
 class CatUpdate(UpdateView):
@@ -53,8 +70,12 @@ class ToyDelete(DeleteView):
 
 
 # Create your views here.
-def home(request):
-    return render(request, "home.html")
+# def home(request):
+#     return render(request, "home.html")
+# And use it in a class based view that replaces the current home view function.
+# django auth is imported and need to update Home
+class Home(LoginView):
+    template_name = 'home.html'
 
 
 def about(request):
@@ -107,7 +128,6 @@ def add_feeding(request, cat_id):
         new_feeding.save()
     return redirect("cat-detail", cat_id=cat_id)
 
-
 # First we capture data from the user via the FeedingForm(request.POST) and prepare it for the database.
 # The method form.is_valid() checks if the submitted form data is valid according to the form’s specifications, such as required fields being filled and data types matching the model’s requirements.
 # After ensuring that the form contains valid data, we save the form with the commit=False option, which returns an in-memory model object so that we can assign the cat_id before actually saving to the database.
@@ -125,3 +145,30 @@ def remove_toy(request, cat_id, toy_id):
     toy = Toy.objects.get(id=toy_id)
     cat.toys.remove(toy)
     return redirect("cat-detail", cat_id=cat_id)
+
+def signup(request):
+    error_message = ''
+    if request.method == 'POST':
+        # This is how to create a 'user' form object
+        # that includes the data from the browser
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            # This will add the user to the database
+            user = form.save()
+            # This is how we log a user in
+            # login is a function on the auth app that is imported at the top
+            login(request, user)
+            return redirect('cat-index')
+        else:
+            error_message = 'Invalid sign up - try again'
+    # A bad POST or a GET request, so render signup.html with an empty form
+    form = UserCreationForm()
+    context = {'form': form, 'error_message': error_message}
+    return render(request, 'signup.html', context)
+    # Same as: 
+    # return render(
+    #     request, 
+    #     'signup.html',
+    #     {'form': form, 'error_message': error_message}
+    # )
+

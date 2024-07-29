@@ -2,7 +2,9 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path("", views.home, name="home"),
+    # path("", views.home, name="home"),
+    # Don’t forget to update main_app/urls.py to use the new CBV after django auth
+    path('', views.Home.as_view(), name='home'),
     path("about/", views.about, name="about"),
     path("cats/", views.cat_index, name="cat-index"),
     path("cats/<int:cat_id>/", views.cat_detail, name="cat-detail"),
@@ -30,4 +32,6 @@ urlpatterns = [
         views.remove_toy,
         name="remove-toy",
     ),
+    # add url for signing new users
+    path("accounts/signup/", views.signup, name='signup')
 ]

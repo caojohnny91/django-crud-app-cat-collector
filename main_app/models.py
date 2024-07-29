@@ -1,5 +1,8 @@
 from django.db import models
 from django.urls import reverse
+from datetime import date
+# Import the User to add user authentication
+from django.contrib.auth.models import User
 
 
 # Create your models here.
@@ -27,6 +30,8 @@ class Cat(models.Model):
     # Add the M:M relationship
     toys = models.ManyToManyField(Toy)
     # Tip: If you don’t have your Toy model above your Cat model in models.py, you’ll need to move it there now. This will correct any toy not defined server errors.
+    # Add the foreign key linking to a user instance
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name

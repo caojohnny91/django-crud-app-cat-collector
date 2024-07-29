@@ -123,3 +123,10 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# Add this variable to specify where successful logins should redirect to
+LOGIN_REDIRECT_URL = 'cat-index'
+# connects to name="cat-index" in main_app, urls.py
+
+# Add this variable to specify where logging out redirects to
+LOGOUT_REDIRECT_URL = 'home'

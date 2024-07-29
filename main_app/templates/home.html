@@ -10,4 +10,17 @@
   </div>
   <img src="{% static 'images/logotype.svg' %}" alt="Text reads: Cat Collector" />
 </section>
+
+<section>
+  {% if not user.is_authenticated %}
+  <section>
+    <form action="{% url 'home' %}" method="post" class="login">
+      <h1>Login</h1>
+      {% csrf_token %} {{ form.as_p }}
+    {% comment %} This input type with hidden is a feature of Django’s authentication that will automatically redirect a user that tries to access a protected route back to that route after they log in! {% endcomment %}
+    <input type="hidden" name="next" value="{{ next }}" />
+    <button type="submit" class="btn submit">Login</button>
+  </form>
+</section>
+{% endif %}
 {% endblock %}
