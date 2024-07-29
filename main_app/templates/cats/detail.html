@@ -1,5 +1,13 @@
 {% extends 'base.html' %} {% load static %} {% block head %}
+<!-- New MCDatepicker CSS -->
+<link href="https://cdn.jsdelivr.net/npm/mc-datepicker/dist/mc-calendar.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="{% static 'css/mcdp.css' %}" />
+<!-- MCDatepicker JS -->
+<script src="https://cdn.jsdelivr.net/npm/mc-datepicker/dist/mc-calendar.min.js"></script>
+<!-- Existing CSS -->
 <link rel="stylesheet" href="{% static 'css/cats/cat-detail.css' %}" />
+<script defer src="{% static 'js/cat-detail.js' %}"></script>
+
 {% endblock %} {% block content %}
 <section class="cat-container">
   <div class="cat-img">
@@ -41,7 +49,11 @@
     <h3>Add a Feeding</h3>
     <!-- Add just above the feedings table -->
     <form action="{% url 'add-feeding' cat.id %}" method="post" class="subsection-content" autocomplete="off">
-      {% csrf_token %} {{ feeding_form.as_p }}
+      {% if cat.fed_for_today %}
+      <p class="fed">{{cat.name}} has been fed all their meals for today!</p>
+      {% else %}
+      <p class="unfed">{{cat.name}} might be hungry!</p>
+      {% endif %} {% csrf_token %} {{ feeding_form.as_p }}
       <button type="submit" class="btn submit">Add Feeding</button>
     </form>
     <h3>Past Feedings</h3>

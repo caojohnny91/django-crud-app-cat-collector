@@ -1,23 +1,23 @@
 from django.shortcuts import render, redirect
-
 # Import HttpResponse to send text-based responses
 from django.http import HttpResponse
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic import ListView, DetailView
 from .models import Cat, Toy
-
 # Import the FeedingForm
 from .forms import FeedingForm
-
 # import auth
 from django.contrib.auth.views import LoginView
-
 # Add the two imports below
 from django.contrib.auth import login
 from django.contrib.auth.forms import UserCreationForm
+# Import the login_required decorator
+from django.contrib.auth.decorators import login_required
+# Import the mixin for class-based views
+from django.contrib.auth.mixins import LoginRequiredMixin
 
-
-class CatCreate(CreateView):
+# Finally, we can protect class-based views like this with loginMixin
+class CatCreate(LoginRequiredMixin, CreateView):
     model = Cat
     # all inherits from CreateView to create our own CBV used to create cats
     # fields = '__all__'
@@ -35,36 +35,36 @@ class CatCreate(CreateView):
     # In Python, methods inherited by the superclass can be invoked by prefacing the method name with super(). Accordingly, after updating the form to include the user, we’re calling super().form_valid(form) to let the CreateView do its usual job of creating the model in the database and redirecting.
 
 
-class CatUpdate(UpdateView):
+class CatUpdate(LoginRequiredMixin, UpdateView):
     model = Cat
     # Let's disallow the renaming of a cat by excluding the name field!
     fields = ["breed", "description", "age"]
 
 
-class CatDelete(DeleteView):
+class CatDelete(LoginRequiredMixin, DeleteView):
     model = Cat
     success_url = "/cats/"
 
 
-class ToyCreate(CreateView):
+class ToyCreate(LoginRequiredMixin, CreateView):
     model = Toy
     fields = "__all__"
 
 
-class ToyList(ListView):
+class ToyList(LoginRequiredMixin, ListView):
     model = Toy
 
 
-class ToyDetail(DetailView):
+class ToyDetail(LoginRequiredMixin, DetailView):
     model = Toy
 
 
-class ToyUpdate(UpdateView):
+class ToyUpdate(LoginRequiredMixin, UpdateView):
     model = Toy
     fields = ["name", "color"]
 
 
-class ToyDelete(DeleteView):
+class ToyDelete(LoginRequiredMixin, DeleteView):
     model = Toy
     success_url = "/toys/"
 
@@ -81,11 +81,14 @@ class Home(LoginView):
 def about(request):
     return render(request, "about.html")
 
-
+# Now we can simply “decorate” any view function that requires a user to be logged in like this:
+@login_required
 def cat_index(request):
-    cats = Cat.objects.all()
-    return render(request, "cats/index.html", {"cats": cats})
-
+    # cats = Cat.objects.all()
+    cats = Cat.objects.filter(user=request.user)
+    # You could also retrieve the logged in user's cats like this
+    # cats = request.user.cat_set.all()
+    return render(request, 'cats/index.html', { 'cats': cats })
 
 # def cat_detail(request, cat_id):
 #     cat = Cat.objects.get(id=cat_id)
@@ -94,6 +97,7 @@ def cat_index(request):
 
 
 # update this view function to include feeding form
+@login_required
 def cat_detail(request, cat_id):
     cat = Cat.objects.get(id=cat_id)
     # toys = Toy.objects.all()  # Fetch all toys
@@ -115,6 +119,7 @@ def cat_detail(request, cat_id):
     )
 
 
+@login_required
 def add_feeding(request, cat_id):
     # create a ModelForm instance using the data in request.POST
     form = FeedingForm(request.POST)
@@ -134,12 +139,14 @@ def add_feeding(request, cat_id):
 # Finally we will redirect instead of render since data has been changed in the database.
 
 
+@login_required
 def associate_toy(request, cat_id, toy_id):
     # Note that you can pass a toy's id instead of the whole object
     Cat.objects.get(id=cat_id).toys.add(toy_id)
     return redirect("cat-detail", cat_id=cat_id)
 
 
+@login_required
 def remove_toy(request, cat_id, toy_id):
     cat = Cat.objects.get(id=cat_id)
     toy = Toy.objects.get(id=toy_id)

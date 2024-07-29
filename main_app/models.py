@@ -32,6 +32,9 @@ class Cat(models.Model):
     # Tip: If you don’t have your Toy model above your Cat model in models.py, you’ll need to move it there now. This will correct any toy not defined server errors.
     # Add the foreign key linking to a user instance
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    # add this new method for custom model method
+    def fed_for_today(self):
+        return self.feeding_set.filter(date=date.today()).count() >= len(MEALS)
 
     def __str__(self):
         return self.name
