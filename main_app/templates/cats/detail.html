@@ -23,7 +23,6 @@
     <p>{{ cat.description }}</p>
     <div class="cat-actions">
       <a href="{% url 'cat-update' cat.id %}" class="btn warn">Edit</a>
-      <span id="delete-btn" class="btn warn">Delete Now</span>
       <a href="{% url 'cat-delete' cat.id %}" class="btn danger">Delete</a>
     </div>
   </div>
